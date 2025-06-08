@@ -15,7 +15,7 @@ services:
       - ./Almacenamiento:/app/Almacenamiento
     depends_on:
       - mysql
-      - ./restore.sql:/docker-entrypoint-initdb.d/restore.sql
+      
 
   mysql:
     image: mysql:8.0
@@ -26,6 +26,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./restore.sql:/docker-entrypoint-initdb.d/restore.sql
 
 volumes:
   mysql_data:
