@@ -4,7 +4,7 @@ services:
   app:
     image: pelonidas19/proyectotfgv1-app
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - MYSQL_HOST=mysql
       - MYSQL_USER=root
@@ -15,6 +15,7 @@ services:
       - ./Almacenamiento:/app/Almacenamiento
     depends_on:
       - mysql
+      - ./restore.sql:/docker-entrypoint-initdb.d/restore.sql
 
   mysql:
     image: mysql:8.0
