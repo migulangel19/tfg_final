@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: ./gol_y_cambio/backend
+    image: pelonidas19/proyectotfgv1-app
     ports:
       - "5000:5000"
     environment:
@@ -11,9 +10,9 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
       - MYSQL_DATABASE=gol_y_cambio_v2
-      - UPLOAD_FOLDER=/app/Almacenamiento 
+      - UPLOAD_FOLDER=/app/Almacenamiento
     volumes:
-      - C:/Users/merin/Escritorio/uni/TFG/Proyecto TFG V1/Almacenamiento:/app/Almacenamiento
+      - ./Almacenamiento:/app/Almacenamiento
     depends_on:
       - mysql
 
