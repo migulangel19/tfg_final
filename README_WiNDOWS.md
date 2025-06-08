@@ -27,3 +27,10 @@ mkdir Almacenamiento
 
 # Levanta los contenedores
 docker-compose up -d
+
+#hay que reinicar la base de datos una vez que se levante el contenedor.
+
+docker restart tfg_final-mysql-1
+
+#inciar app
+Listo ya tienes tu app correndo en http://127.0.0.1:5001/
