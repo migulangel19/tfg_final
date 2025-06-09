@@ -98,9 +98,12 @@ CREATE TABLE `equipos` (
   `nombre` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `tipo` enum('masculino','femenino','mixto') NOT NULL DEFAULT 'mixto',
+  `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_equipo_nombre` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uq_equipo_nombre` (`nombre`),
+  KEY `fk_equipos_user_id` (`user_id`),
+  CONSTRAINT `fk_equipos_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,7 +164,7 @@ CREATE TABLE `eventos` (
   CONSTRAINT `eventos_ibfk_video` FOREIGN KEY (`video_id`) REFERENCES `videos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_eventos_evento_personalizado` FOREIGN KEY (`evento_personalizado_id`) REFERENCES `evento_personalizado` (`id`) ON DELETE CASCADE,
   CONSTRAINT `ck_un_solo_tipo_evento` CHECK ((((`tipo_evento_id` is not null) and (`evento_personalizado_id` is null)) or ((`tipo_evento_id` is null) and (`evento_personalizado_id` is not null))))
-) ENGINE=InnoDB AUTO_INCREMENT=220 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -235,7 +238,7 @@ CREATE TABLE `jugadores_en_pista` (
   CONSTRAINT `jugadores_en_pista_ibfk_1` FOREIGN KEY (`partido_id`) REFERENCES `partidos` (`id`) ON DELETE CASCADE,
   CONSTRAINT `jugadores_en_pista_ibfk_2` FOREIGN KEY (`jugador_id`) REFERENCES `jugadores` (`id`) ON DELETE CASCADE,
   CONSTRAINT `jugadores_en_pista_ibfk_3` FOREIGN KEY (`equipo_id`) REFERENCES `equipos` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +260,7 @@ CREATE TABLE `liga` (
   KEY `liga_ibfk_categoria` (`categoria_id`),
   CONSTRAINT `liga_ibfk_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `liga_ibfk_temporada` FOREIGN KEY (`temporada_id`) REFERENCES `temporada` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,7 +321,7 @@ CREATE TABLE `temporada` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_user_proyecto_nombre` (`user_id`,`nombre`),
   CONSTRAINT `temporada_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -356,7 +359,7 @@ CREATE TABLE `users` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -380,7 +383,8 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `perdidas`,
  1 AS `recuperaciones`,
  1 AS `faltas_cometidas`,
- 1 AS `faltas_recibidas`*/;
+ 1 AS `faltas_recibidas`,
+ 1 AS `asistencias`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -435,7 +439,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `v_estadisticas_jugador_partido` AS select `p`.`id` AS `partido_id`,`p`.`fecha_hora` AS `fecha_partido`,`e_local`.`nombre` AS `equipo_local`,`e_visitante`.`nombre` AS `equipo_visitante`,`j`.`id` AS `jugador_id`,concat(`j`.`nombre`,' ',`j`.`apellido`,ifnull(concat(' (#',`j`.`dorsal`,')'),'')) AS `jugador`,`eq`.`nombre` AS `equipo_jugador`,concat(sum((case when (`te`.`nombre` = 'Gol') then 1 else 0 end)),'/',sum((case when (`te`.`nombre` in ('Gol','Tiro fallido','Tiro parado')) then 1 else 0 end))) AS `tiros_campo`,concat(sum((case when (`te`.`nombre` = 'Gol 7 metros') then 1 else 0 end)),'/',sum((case when (`te`.`nombre` in ('Gol 7 metros','Tiro fallido 7 metros','Tiro parado 7 metros')) then 1 else 0 end))) AS `tiros_7m`,sum((case when (`te`.`nombre` = 'Pérdida') then 1 else 0 end)) AS `perdidas`,sum((case when (`te`.`nombre` = 'Recuperación') then 1 else 0 end)) AS `recuperaciones`,sum((case when (`te`.`nombre` = 'Falta cometida') then 1 else 0 end)) AS `faltas_cometidas`,sum((case when (`te`.`nombre` = 'Falta recibida') then 1 else 0 end)) AS `faltas_recibidas` from ((((((`eventos` `ev` join `tipo_evento` `te` on((`ev`.`tipo_evento_id` = `te`.`id`))) join `partidos` `p` on((`ev`.`partido_id` = `p`.`id`))) join `equipos` `e_local` on((`p`.`equipo_local_id` = `e_local`.`id`))) join `equipos` `e_visitante` on((`p`.`equipo_visitante_id` = `e_visitante`.`id`))) join `jugadores` `j` on((`ev`.`jugador_id` = `j`.`id`))) join `equipos` `eq` on((`j`.`equipo_id` = `eq`.`id`))) group by `p`.`id`,`j`.`id` order by `p`.`fecha_hora` desc,`eq`.`nombre`,`jugador` */;
+/*!50001 VIEW `v_estadisticas_jugador_partido` AS select `p`.`id` AS `partido_id`,`p`.`fecha_hora` AS `fecha_partido`,`e_local`.`nombre` AS `equipo_local`,`e_visitante`.`nombre` AS `equipo_visitante`,`j`.`id` AS `jugador_id`,concat(`j`.`nombre`,' ',`j`.`apellido`,ifnull(concat(' (#',`j`.`dorsal`,')'),'')) AS `jugador`,`eq`.`nombre` AS `equipo_jugador`,concat(sum((case when ((`te`.`id` = 37) and (`ev`.`resultado_tiro` = 'gol')) then 1 else 0 end)),'/',sum((case when (`te`.`id` = 37) then 1 else 0 end))) AS `tiros_campo`,concat(sum((case when (`te`.`id` = 13) then 1 else 0 end)),'/',sum((case when (`te`.`id` = 13) then 1 else 0 end))) AS `tiros_7m`,sum((case when (`te`.`id` = 30) then 1 else 0 end)) AS `perdidas`,sum((case when (`te`.`id` = 31) then 1 else 0 end)) AS `recuperaciones`,sum((case when (`te`.`id` = 4) then 1 else 0 end)) AS `faltas_cometidas`,sum((case when (`te`.`id` = 5) then 1 else 0 end)) AS `faltas_recibidas`,sum((case when (`te`.`id` = 32) then 1 else 0 end)) AS `asistencias` from ((((((`eventos` `ev` join `tipo_evento` `te` on((`ev`.`tipo_evento_id` = `te`.`id`))) join `partidos` `p` on((`ev`.`partido_id` = `p`.`id`))) join `equipos` `e_local` on((`p`.`equipo_local_id` = `e_local`.`id`))) join `equipos` `e_visitante` on((`p`.`equipo_visitante_id` = `e_visitante`.`id`))) join `jugadores` `j` on((`ev`.`jugador_id` = `j`.`id`))) join `equipos` `eq` on((`j`.`equipo_id` = `eq`.`id`))) where (`ev`.`jugador_id` is not null) group by `p`.`id`,`j`.`id` order by `p`.`fecha_hora` desc,`eq`.`nombre`,`jugador`,`asistencias` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -466,6 +470,9 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-06-09 19:44:33
+
 
 -- Dump completed on 2025-06-06 12:00:19
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
@@ -526,14 +533,6 @@ INSERT INTO `users` VALUES (1,'merino','sha256$p8XwPn3K7kAkhCi3$706df36f13d917e3
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-
-LOCK TABLES `posiciones` WRITE;
-/*!40000 ALTER TABLE `posiciones` DISABLE KEYS */;
-INSERT INTO `posiciones` VALUES (1,'portero','#1E90FF'),(2,'lateral','#FF8C00'),(3,'central','#FFD700'),(4,'pivote','#DC143C'),(5,'extremo','#32CD32');
-/*!40000 ALTER TABLE `posiciones` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -591,6 +590,13 @@ LOCK TABLES `tipo_evento` WRITE;
 INSERT INTO `tipo_evento` VALUES (4,'Falta cometida',0,0,1,2),(5,'Exclusión 2 minutos',0,0,1,3),(6,'Entra en pista',0,0,1,4),(7,'Sale de pista',0,0,1,4),(8,'Inicio primer tiempo',0,1,0,5),(9,'Fin primer tiempo',0,1,0,5),(10,'Tiempo muerto',1,0,0,6),(11,'Fin sanción 2 minutos',0,0,1,3),(12,'Falta Recibida',0,0,1,2),(13,'Gol 7 metros',0,0,1,7),(14,'Tiro fallido 7 metros',0,0,1,7),(15,'Tiro parado 7 metros',0,0,1,7),(16,'Comete 7 metros',0,0,1,2),(17,'Inicio segunda parte',0,1,0,5),(18,'Fin segunda parte',0,1,0,5),(19,'Inicio prórroga',0,1,0,5),(20,'Fin prórroga',0,1,0,5),(23,'Final del partido',0,1,0,5),(28,'Parada',0,0,1,8),(29,'Parada 7 metros',0,0,1,8),(30,'Pérdida',0,0,1,9),(31,'Recuperación',0,0,1,10),(32,'Asistencia de gol',0,0,0,11),(33,'Tarjeta Roja',0,0,1,3),(34,'Tarjeta Amarilla',0,0,1,3),(35,'Porteria Vacia (7 J.)',1,0,0,6),(36,'Porteria Vacia (6 J.)',1,0,0,6),(37,'Tiro',0,0,1,1),(38,'Tiro bloqueado',0,0,1,10),(39,'Sustitucion ilegal',0,0,1,3),(40,'Asistencia para Fly',0,0,1,11);
 /*!40000 ALTER TABLE `tipo_evento` ENABLE KEYS */;
 UNLOCK TABLES;
+
+LOCK TABLES `posiciones` WRITE;
+/*!40000 ALTER TABLE `posiciones` DISABLE KEYS */;
+INSERT INTO `posiciones` VALUES (1,'portero','#1E90FF'),(2,'lateral','#FF8C00'),(3,'central','#FFD700'),(4,'pivote','#DC143C'),(5,'extremo','#32CD32');
+/*!40000 ALTER TABLE `posiciones` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 --
 -- Dumping data for table `users`
