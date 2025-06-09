@@ -100,10 +100,9 @@ CREATE TABLE `equipos` (
   `tipo` enum('masculino','femenino','mixto') NOT NULL DEFAULT 'mixto',
   `user_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_equipo_nombre` (`nombre`),
   KEY `fk_equipos_user_id` (`user_id`),
   CONSTRAINT `fk_equipos_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,7 +320,7 @@ CREATE TABLE `temporada` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_user_proyecto_nombre` (`user_id`,`nombre`),
   CONSTRAINT `temporada_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -471,7 +470,8 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-06-09 19:44:33
+-- Dump completed on 2025-06-09 20:39:44
+
 
 
 -- Dump completed on 2025-06-06 12:00:19
