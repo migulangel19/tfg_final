@@ -35,7 +35,8 @@ git clone https://github.com/migulangel19/tfg_final.git
 cd tfg_final
 
 # Crea la carpeta de almacenamiento si no existe
-mkdir -p Almacenamiento
+mkdir -p Almacenamiento/uploads
+chmod -R 777 Almacenamiento
 
 # Levanta los contenedores
 docker-compose up -d
