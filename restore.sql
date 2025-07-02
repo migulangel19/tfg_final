@@ -12,6 +12,10 @@ SET CHARACTER SET utf8mb4;
 SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 SET FOREIGN_KEY_CHECKS = 0;
 SET UNIQUE_CHECKS = 0;
+-- Permitir conexión desde otros contenedores
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'root';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
 
 -- =====================================================
 -- 1. CREATE TABLES
