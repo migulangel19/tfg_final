@@ -15,18 +15,19 @@ services:
       - ./Almacenamiento:/app/Almacenamiento
     depends_on:
       - mysql
-      
 
   mysql:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: gol_y_cambio_v2
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_0900_ai_ci
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./restore.sql:/docker-entrypoint-initdb.d/restore.sql
+      - ./restore.sql:/docker-entrypoint-initdb.d/restore.sql:ro
 
 volumes:
   mysql_data:
