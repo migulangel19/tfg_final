@@ -7,6 +7,8 @@
 -- =====================================================
 
 -- Set SQL mode and disable checks for faster execution
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 SET FOREIGN_KEY_CHECKS = 0;
 SET UNIQUE_CHECKS = 0;
